@@ -1,20 +1,31 @@
 package com.example.rinha.model;
 
+import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.IdGeneratorType;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.annotation.Id;
 import org.springframework.util.StreamUtils;
 
 import java.math.BigInteger;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
 @Getter
+@Entity
+@Data
 public class ClienteModel {
+    @jakarta.persistence.Id
+    @Id
     private UUID id;
     private int limite;
     private int saldo;
-    private final List<ExtratoModel> list = new ArrayList<ExtratoModel>();
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "join_id")
+    private final List<ExtratoModel> list = new ArrayList<>();
 
 
 
@@ -24,12 +35,18 @@ public class ClienteModel {
         this.saldo = cliente.saldo();
     }
 
+    public ClienteModel() {
+
+    }
+
+
     private void SalvarExtrato (int valor, char tipo, String descricao){
         ExtratoModel ex = new ExtratoModel(valor,tipo,descricao, OffsetDateTime.now());
         if (list.size() >= 10) {
             list.removeFirst();
         }
         list.add(ex);
+
     }
 
     public boolean Credito(int valor, String descricao){
@@ -57,4 +74,6 @@ public class ClienteModel {
         saldo += valor;
         return saldo;
     }
+
+
 }

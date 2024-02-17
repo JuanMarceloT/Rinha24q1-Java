@@ -6,9 +6,7 @@ import com.example.rinha.model.ClienteModel;
 import com.example.rinha.model.saldoExtrato;
 import com.example.rinha.model.transacoesDto;
 import com.example.rinha.repositories.ClienteRepo;
-
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,24 +20,24 @@ import java.util.UUID;
 @RequestMapping
 public class ClienteController {
     private final ClienteRepo DB;
-
+    @Autowired
     public ClienteController(ClienteRepo db) {
-        DB = db;
+        this.DB = db;
         ClienteModel u = new ClienteModel(new ClienteDto(100000,0));
-
+        u.Credito(10,"sda");
         ClienteModel d = new ClienteModel(new ClienteDto(80000,0));
         ClienteModel t = new ClienteModel(new ClienteDto(1000000,0));
         ClienteModel q = new ClienteModel(new ClienteDto(10000000,0));
         ClienteModel c = new ClienteModel(new ClienteDto(500000,0));
-        DB.Create(u);
+        DB.save(u);
         System.out.println(u.getId());
-        DB.Create(d);
+        DB.save(d);
         System.out.println(d.getId());
-        DB.Create(t);
+        DB.save(t);
         System.out.println(t.getId());
-        DB.Create(q);
+        DB.save(q);
         System.out.println(q.getId());
-        DB.Create(c);
+        DB.save(c);
         System.out.println(c.getId());
     }
     @PostMapping("/clientes/{id}/saldo")
@@ -47,7 +45,7 @@ public class ClienteController {
         int valor = trancoes.valor();
         char tipo = trancoes.tipo();
         String descricao = trancoes.descricao();
-        Optional<ClienteModel> clienteOptional = DB.getClienteById(id);
+        Optional<ClienteModel> clienteOptional = DB.findById(id);
         if (clienteOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -65,6 +63,7 @@ public class ClienteController {
                 break;
         }
         if (Approved) {
+            DB.save(cliente);
             Map<String, Object> response = new HashMap<>();
             response.put("limite", cliente.getLimite());
             response.put("saldo", cliente.getSaldo());
@@ -76,7 +75,7 @@ public class ClienteController {
 
     @GetMapping("/clientes/{id}/extrato")
     public ResponseEntity<Map<String, Object>> extrato(@PathVariable UUID id) {
-        Optional<ClienteModel> clienteOptional = DB.getClienteById(id);
+        Optional<ClienteModel> clienteOptional = DB.findById(id);
         if (clienteOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
