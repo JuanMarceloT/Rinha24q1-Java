@@ -23,24 +23,8 @@ public class ClienteController {
     @Autowired
     public ClienteController(ClienteRepo db) {
         this.DB = db;
-        ClienteModel u = new ClienteModel(new ClienteDto(100000,0));
-        u.Credito(10,"sda");
-        ClienteModel d = new ClienteModel(new ClienteDto(80000,0));
-        ClienteModel t = new ClienteModel(new ClienteDto(1000000,0));
-        ClienteModel q = new ClienteModel(new ClienteDto(10000000,0));
-        ClienteModel c = new ClienteModel(new ClienteDto(500000,0));
-        DB.save(u);
-        System.out.println(u.getId());
-        DB.save(d);
-        System.out.println(d.getId());
-        DB.save(t);
-        System.out.println(t.getId());
-        DB.save(q);
-        System.out.println(q.getId());
-        DB.save(c);
-        System.out.println(c.getId());
     }
-    @PostMapping("/clientes/{id}/saldo")
+    @PostMapping("/clientes/{id}/transacoes")
     public ResponseEntity<Map<String, Object>> saldo(@PathVariable UUID id, @RequestBody transacoesDto trancoes) {
         int valor = trancoes.valor();
         char tipo = trancoes.tipo();

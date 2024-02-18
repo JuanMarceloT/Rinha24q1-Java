@@ -8,7 +8,7 @@ import org.springframework.data.repository.Repository;
 import java.util.Optional;
 import java.util.UUID;
 
-
+@org.springframework.stereotype.Repository
 public interface ClienteRepo extends Repository<ClienteModel, UUID> {
 
     ClienteModel save(ClienteModel cliente);
