@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class RinhaApplication {
 
 	public static void main(String[] args) {
+		for (String envName : System.getenv().keySet()) {
+            System.out.println(envName + ": " + System.getenv(envName));
+        }
 		SpringApplication.run(RinhaApplication.class, args);
 	}
 

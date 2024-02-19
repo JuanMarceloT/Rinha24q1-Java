@@ -6,6 +6,8 @@ import com.example.rinha.model.ClienteModel;
 import com.example.rinha.model.saldoExtrato;
 import com.example.rinha.model.transacoesDto;
 import com.example.rinha.repositories.ClienteRepo;
+import io.micrometer.common.lang.NonNull;
+import io.micrometer.common.lang.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,15 +28,14 @@ public class ClienteController {
     }
     @PostMapping("/clientes/{id}/transacoes")
     public ResponseEntity<Map<String, Object>> saldo(@PathVariable UUID id, @RequestBody transacoesDto trancoes) {
+        String myEnvVariable = System.getenv("POSTGRES_PASSWORD");
+		System.out.println("test");
+        System.out.println("MY_ENV_VARIABLE value is: " + myEnvVariable);
         int valor = trancoes.valor();
         char tipo = trancoes.tipo();
         String descricao = trancoes.descricao();
-        Optional<ClienteModel> clienteOptional = DB.findById(id);
-        if (clienteOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        ClienteModel cliente = clienteOptional.get();
+    
+        ClienteModel cliente = DB.getById(id);
         boolean Approved = false;
         switch (tipo) {
             case 'c':
@@ -59,11 +60,7 @@ public class ClienteController {
 
     @GetMapping("/clientes/{id}/extrato")
     public ResponseEntity<Map<String, Object>> extrato(@PathVariable UUID id) {
-        Optional<ClienteModel> clienteOptional = DB.findById(id);
-        if (clienteOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        ClienteModel cliente = clienteOptional.get();
+        ClienteModel cliente = DB.getById(id);
 
         OffsetDateTime dataExtrato = OffsetDateTime.now();
             Map<String, Object> response = new HashMap<>();
