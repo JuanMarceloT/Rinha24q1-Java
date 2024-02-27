@@ -20,7 +20,7 @@ import java.util.*;
 public class ClienteModel {
     @jakarta.persistence.Id
     @Id
-    private UUID id;
+    private int id;
     private int limite;
     private int saldo;
     @OneToMany(cascade = CascadeType.ALL)
@@ -30,7 +30,6 @@ public class ClienteModel {
 
 
     public ClienteModel(ClienteDto cliente) {
-        this.id = UUID.randomUUID();
         this.limite = cliente.limite();
         this.saldo = cliente.saldo();
     }
@@ -41,11 +40,11 @@ public class ClienteModel {
 
 
     private void SalvarExtrato (int valor, char tipo, String descricao){
-        ExtratoModel ex = new ExtratoModel(valor,tipo,descricao, OffsetDateTime.now());
-        if (list.size() >= 10) {
-            list.removeFirst();
+        ExtratoModel ex = new ExtratoModel(valor, tipo, descricao, OffsetDateTime.now());
+        while(list.size() >= 10) {
+            list.removeLast();
         }
-        list.add(ex);
+        list.addFirst(ex);
 
     }
 
@@ -53,6 +52,10 @@ public class ClienteModel {
         saldo += valor;
         SalvarExtrato(valor, 'c', descricao);
         return true;
+    }
+
+    public List<ExtratoModel> GetExtrato(){
+        return this.list;
     }
 
 
@@ -64,15 +67,6 @@ public class ClienteModel {
         saldo -= valor;
         SalvarExtrato(valor, 'd', descricao);
         return true;
-    }
-
-    public int Subtrair_saldo(int valor){
-        saldo -= valor;
-        return saldo;
-    }
-    public int Incrementar_Saldo(int valor){
-        saldo += valor;
-        return saldo;
     }
 
 

@@ -12,13 +12,14 @@ import java.util.Date;
 
 @Entity
 @Data
+@Getter
 @Transactional
 @JsonIgnoreProperties(value = { "id" })
 public class ExtratoModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private int id;
     private int valor;
     private char tipo;
     private String descricao;
